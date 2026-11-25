@@ -2,8 +2,11 @@
 
 A web app for hospital staff to manage admitted patients: add, view, search, filter, edit, discharge and delete patient records. Works on mobile, tablet and desktop.
 
-**Live app:** _LIVE_FRONTEND_URL_  
-**Live API:** _LIVE_BACKEND_URL_ (interactive API docs at `/docs`)
+| | Link |
+|---|---|
+| **Live app** | https://s-cribe-patients-management.vercel.app |
+| **Live API** | https://scribe-patients-management.onrender.com ([interactive API docs](https://scribe-patients-management.onrender.com/docs)) |
+| **Source code** | https://github.com/R2005ishi/SCribe_Patients_Management |
 
 > The backend is on Render's free tier, which sleeps after ~15 minutes of inactivity. The first load can take 30–60 seconds while it wakes up. The app shows a "server is waking up" message during this time.
 
@@ -153,7 +156,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173. The frontend calls `http://localhost:8000` by default. To change it, copy `.env.example` to `.env` and set `VITE_API_URL`.
+Open http://localhost:5173. In development the frontend calls `http://localhost:8000`. To change it, copy `.env.example` to `.env` and set `VITE_API_URL`. Production builds use the Render URL from `frontend/.env.production`.
 
 ## Deployment
 
@@ -162,9 +165,12 @@ Open http://localhost:5173. The frontend calls `http://localhost:8000` by defaul
    - Root directory: `backend`
    - Build command: `pip install -r requirements.txt`
    - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - Environment variables: `DATABASE_URL` (Neon string), `FRONTEND_ORIGIN` (Vercel URL), `PYTHON_VERSION=3.12.8`
+   - Python version: pinned to 3.12.8 by `backend/.python-version`
+   - Environment variables:
+     - `DATABASE_URL`: the Neon connection string (secret, set only in the Render dashboard)
+     - `FRONTEND_ORIGIN`: `https://s-cribe-patients-management.vercel.app,http://localhost:5173` (CORS: which sites may call the API)
 3. **Frontend (Vercel → Import project):**
    - Root directory: `frontend`, framework preset: Vite
-   - Environment variable: `VITE_API_URL` (Render URL, no trailing slash)
+   - The backend URL comes from `frontend/.env.production` (`VITE_API_URL=https://scribe-patients-management.onrender.com`). It is a public URL, not a secret.
 
-The tables are created (and wards/doctors filled) automatically on the first startup. No secrets are stored in this repository. They live only in the hosting dashboards.
+Every push to `main` redeploys both automatically. The tables are created (and wards/doctors filled) automatically on the first startup. The only secret, the database connection string, is never stored in this repository.
